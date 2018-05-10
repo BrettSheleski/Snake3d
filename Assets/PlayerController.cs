@@ -69,6 +69,23 @@ public class PlayerController : MonoBehaviour {
         //head.transform.Rotate(direction);
     }
 
+    internal bool ContainsPoint(Vector3 candyPosition)
+    {
+        if (head.transform.position == candyPosition)
+            return true;
+
+        foreach(var part in bodyPieces)
+        {
+            if (part.transform.position == candyPosition)
+                return true;
+        }
+
+        if (tail.transform.position == candyPosition)
+            return true;
+
+        return false;
+    }
+
     public void Grow(int count)
     {
         GameObject newPiece;

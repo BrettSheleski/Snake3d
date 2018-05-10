@@ -15,12 +15,20 @@ public class GameManager : MonoBehaviour {
         turnDown = KeyCode.DownArrow, 
         turnUp = KeyCode.UpArrow;
 
+
+    public GameObject candyPrefab;
+
+
     private float lastMoveTime;
+
+    private List<GameObject> spawnedCandy = new List<GameObject>();
 
 	// Use this for initialization
 	void Start () {
         lastMoveTime = Time.time;
         lastTurnTime = Time.time;
+
+        SpawnCandy();
 	}
 	
 	// Update is called once per frame
@@ -34,7 +42,49 @@ public class GameManager : MonoBehaviour {
         {
             GrowPlayer();
         }
+
+        CheckIfPlayerAteCandy();
 	}
+
+    private void CheckIfPlayerAteCandy()
+    {
+        if (player != null)
+        {
+            for(int i = 0; i < spawnedCandy.Count; ++i)
+            {
+                if (spawnedCandy[i].transform.position == player.head.transform.position)
+                {
+                    GameObject.Destroy(spawnedCandy[i]);
+                    spawnedCandy.RemoveAt(i);
+
+                    SpawnCandy();
+                }
+            }
+        }
+    }
+
+    private void SpawnCandy()
+    {
+        Vector3 candyPosition;
+
+        do
+        {
+            int x = (int)(UnityEngine.Random.value * 10 - 5),
+            y = (int)(UnityEngine.Random.value * 10 - 5),
+            z = (int)(UnityEngine.Random.value * 10 - 5);
+
+            candyPosition = new Vector3(x, y, z);
+        }
+        while (player != null && player.ContainsPoint(candyPosition));
+
+        GameObject candy = GameObject.Instantiate(candyPrefab);
+
+        candy.transform.position = candyPosition;
+
+        candy.transform.rotation = UnityEngine.Random.rotation;
+
+        spawnedCandy.Add(candy);
+    }
 
     private void GrowPlayer()
     {
